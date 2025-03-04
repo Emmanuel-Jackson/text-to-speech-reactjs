@@ -1,0 +1,259 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.light-mode {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.app-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.gradient-title {
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+  font-weight: bold;
+
+  font-family: "Brush Script MT", cursive;
+
+}
+.gradient-sub-title {
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  font-size: 5px;
+  font-weight: bold;
+}
+
+.time {
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.mode-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.text-areas {
+  display: flex;
+  gap: 20px;
+  width: 97%;
+  max-width: 1200px;
+}
+
+.input-section,
+.output-section {
+  flex: 1;
+}
+
+.textarea-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.microphone-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.microphone-button.active {
+  color: #ff6b6b;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: #4ecdc4;
+}
+
+.settings-dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: inherit;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1;
+}
+
+.voice-dropdown {
+  margin-left: auto;
+}
+
+.voice-dropdown select {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: inherit;
+  color: inherit;
+}
+
+.text-area {
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  resize: none;
+  background-color: inherit;
+  color: inherit;
+  transition: border-color 0.3s;
+}
+
+.text-area:focus {
+  border-color: #4ecdc4;
+  outline: none;
+}
+
+.word-count {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #4ecdc4;
+}
+
+/* Output Section */
+.output {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: inherit;
+  color: inherit;
+  height: 253px;
+  overflow-y: auto;
+}
+
+.word {
+  transition: all 0.3s ease;
+}
+
+.word.highlight {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 4px;
+  animation: highlight 0.5s ease;
+}
+
+@keyframes highlight {
+  from {
+    background-color: transparent;
+    color: inherit;
+  }
+  to {
+    background-color: #ff6b6b;
+    color: white;
+  }
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.control-button {
+  padding: 10px 20px;
+  background-color: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.control-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.control-button:hover:not(:disabled) {
+  background-color: #3aa89f;
+}
+
+/* Copy Popup */
+.copy-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4ecdc4;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
