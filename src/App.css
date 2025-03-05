@@ -28,17 +28,17 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  width: 100%;
   margin-bottom: 20px;
 }
 
 .gradient-title {
+  margin: 0;
   background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 2.5rem;
-  font-weight: bold;
-
   font-family: "Brush Script MT", cursive;
 
 }
@@ -46,7 +46,7 @@ body {
   background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
   -webkit-background-clip: text;
   font-size: 5px;
-  font-weight: bold;
+  font-weight: bolder;
 }
 
 .time {
@@ -93,6 +93,7 @@ body {
   gap: 10px;
   margin-bottom: 10px;
 }
+
 
 .microphone-button {
   background: none;
@@ -161,6 +162,7 @@ body {
   border-color: #4ecdc4;
   outline: none;
 }
+
 
 .word-count {
   margin-top: 10px;
@@ -255,5 +257,190 @@ body {
   }
   100% {
     opacity: 0;
+  }
+}
+
+/* Add these media queries at the bottom of your existing CSS */
+
+@media (max-width: 850px) {
+  .text-areas {
+    flex-direction: column;
+    height: calc(100vh - 200px);
+  }
+  .textarea-header{
+    justify-content: center;
+  }
+
+  .input-section, 
+  .output-section {
+    flex: none;
+    width: 100%;
+    height: auto;
+  }
+
+  .input-section {
+    order: 1;
+    height: 50vh;
+  }
+
+  .output-section {
+    order: 2;
+    height: 40vh;
+    flex: 1.1;
+  }
+
+  .header {
+    flex-direction:row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .gradient-title {
+    font-size: 1.8rem;
+  }
+
+  .textarea-header {
+    flex-wrap: wrap;
+    row-gap: 15px;
+  }
+
+  .voice-dropdown select {
+    width: 100%;
+  }
+
+  .text-area {
+    height: 150px;
+  }
+
+  .output {
+    height: 150px;
+  }
+
+  .controls {
+    flex-direction: column;
+    width: 100%;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    padding: 0 20px;
+  }
+
+  .control-button {
+    width: 100%;
+    justify-content: center;
+    padding: 15px 20px;
+    
+  }
+
+  .settings-dropdown .dropdown-content {
+    right: auto;
+    left: 0;
+  }
+
+  .main-content {
+    padding-bottom: 100px; /* Space for fixed controls */
+  }
+}
+
+/* Optional: Add touch-friendly hover states */
+@media (hover: none) {
+  .icon-button:hover {
+    color: inherit;
+  }
+  
+  .control-button:hover:not(:disabled) {
+    background-color: #4ecdc4;
+  }
+}
+/* Update header styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  text-align: left;
+}
+
+.time-date {
+  text-align: right;
+}
+
+.gradient-title {
+  margin: 0;
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  margin-top: 2px;
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.9;
+  font-weight: bold;
+
+}
+
+.time {
+  font-size: 1.2rem;
+  background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 0.9rem;
+  margin-top: 3px;
+  opacity: 0.8;
+  -webkit-text-fill-color: #ff6b6b;
+  font-weight: bold;
+}
+
+
+/* Mobile Responsive */
+@media (max-width: 850px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .subtitle,
+  .date {
+    display: none;
+  }
+
+  .gradient-title {
+    font-size: 1.8rem;
+    white-space: nowrap;
+  }
+
+  .time {
+    font-size: 1.1rem;
+    margin-top: 0;
+  }
+
+  .time-date {
+    text-align: right;
+  }
+}
+
+/* Smaller Mobile Screens */
+@media (max-width: 480px) {
+  .gradient-title {
+    font-size: 1.5rem;
+  }
+
+  .time {
+    font-size: 1rem;
   }
 }

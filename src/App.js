@@ -174,21 +174,23 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <header className="header">
-        <h1 className="gradient-title">Speech Studio</h1>
-        <div className="time">{time}</div>
-
-      </header>
+<header className="header">
+  <div className="header-left">
+    <h1 className="gradient-title">Speech Studio</h1>
+    <div className="subtitle">Unlimited Words. Free. No Complexity.</div>
+  </div>
+  
+  <div className="time-date">
+    <div className="time">{time}</div>
+    <div className="date">{new Date().toLocaleDateString()}</div>
+  </div>
+</header>
 
       <div className="main-content">
         <div className="text-areas">
           {/* Input Section */}
           <div className="input-section">
             <div className="textarea-header">
-              <button
-                className={`microphone-button ${isListening ? "active" : ""}`}
-                onClick={handleListen}
-              >
         <button
           className="mode-toggle"
           onClick={() => setDarkMode(!darkMode)}
@@ -196,7 +198,6 @@ export default function App() {
         >
           {darkMode ? <FaSun /> : <FaMoon />}
         </button>
-              </button>
               <button className="icon-button" onClick={handleCopy}>
                 <FaCopy />
               </button>
@@ -266,7 +267,7 @@ export default function App() {
             </div>
             <textarea
               className="text-area"
-              placeholder="Welcome to Speech Studio. Unlimited Words. Free. No Complexity. Enter Text..."
+              placeholder="Enter Text..."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
