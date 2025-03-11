@@ -1,0 +1,6 @@
+build:
+  os: ubuntu
+  node_version: 18
+  commands:
+    - npm install
+    - npm run build
