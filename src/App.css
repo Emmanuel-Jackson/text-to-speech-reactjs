@@ -1143,8 +1143,8 @@ input :focus{
   grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
   padding: 2rem 5%;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background: #121212;
+  border-top: 1px solid #333;
   margin-top: auto;
 }
 
@@ -1217,6 +1217,7 @@ input :focus{
   border-radius: 25px;
   text-decoration: none;
   font-weight: 500;
+  font-size: 15px;
   transition: transform 0.3s ease;
 }
 
@@ -1280,8 +1281,8 @@ input :focus{
 
   .time-date-container,
   .subtitle,
-  .name-fields,
   .settings-dropdown,
+  .lead,
   
   select[value="font-family"] {
     display: none !important;
@@ -1359,7 +1360,8 @@ input :focus{
   background: rgba(78, 205, 196, 0.1);
   border-bottom: 1px solid rgba(78, 205, 196, 0.2);
   color: #4ecdc4;
-  font-size: 0.9rem;
+  font-weight: bold;
+  font-size: 0.71rem;
 }
 
 /* Show only on mobile */
@@ -1371,9 +1373,6 @@ input :focus{
 
 /* Mobile Auth Layout */
 @media (max-width: 768px) {
-  .auth-container {
-    padding: 1rem;
-  }
 
   .auth-grid {
     grid-template-columns: 1fr;
@@ -1386,7 +1385,7 @@ input :focus{
   }
 
   .gradient-title {
-    font-size: 1.8rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
   }
 
@@ -1404,9 +1403,9 @@ input :focus{
   }
 
   .auth-card {
-    padding: 1.5rem;
+    padding: 1rem;
     width: 100%;
-    max-width: none;
+    max-width: 343px;
   }
 
   .auth-heading {
@@ -1436,14 +1435,14 @@ input :focus{
   }
 
   .google-login {
-    width: 100% !important;
+    width: 90% !important;
   }
 }
 
 /* Add these for better mobile experience */
 @media (max-width: 480px) {
   .gradient-title {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   .bio-text {
@@ -1482,4 +1481,7 @@ input :focus{
   .auth-input {
     width: 100%;
   }
+}
+.footer-right p {
+  color: #666;
 }

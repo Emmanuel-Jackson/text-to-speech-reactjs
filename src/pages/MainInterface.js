@@ -271,13 +271,15 @@ useEffect(() => {
       <div className="footer-left">
         <h3 className="footer-title">Speech Studio</h3>
         <p>Developed by Elijah Jackson</p>
-        <p className="copyright">© 2025 Speech Studio LLC. All rights reserved</p>
+        <p className="copyright">© 2025 Speech Studio. All rights reserved</p>
       </div>
   
       <div className="footer-center">
       </div>
   
       <div className="footer-right">
+      <p className="email-footer">Contact Email - <a href="mailto:Emjackson107@gmail.com">Emjackson107@gmail.com</a></p>
+
         {/*}
         <div className="social-icons">
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
@@ -297,7 +299,7 @@ useEffect(() => {
           target="_blank" 
           rel="noopener noreferrer"
         >
-          💖 Donate! To Improve The Website 
+          💖 Donate! To Help Improve The Website 
         </a>
       </div>
     </footer>

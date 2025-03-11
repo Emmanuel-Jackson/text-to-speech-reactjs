@@ -70,6 +70,46 @@ const Auth = () => {
   window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google?prompt=consent&access_type=offline`;
   };
 
+  const Footer = () => (
+    <footer className="app-footer">
+      <div className="footer-left">
+        <h3 className="footer-title">Speech Studio</h3>
+        <p>Developed by Elijah Jackson</p>
+        <p className="copyright">© 2025 Speech Studio. All rights reserved</p>
+      </div>
+  
+      <div className="footer-center">
+      </div>
+  
+      <div className="footer-right">
+      <p className="email-footer">Contact Email - <a href="mailto:Emjackson107@gmail.com">Emjackson107@gmail.com</a></p>
+
+        {/*}
+        <div className="social-icons">
+          <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+            <img src="tiktok-icon.svg" alt="TikTok" />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <img src="instagram-icon.svg" alt="Instagram" />
+          </a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+            <img src="youtube-icon.svg" alt="YouTube" />
+          </a>
+        </div>
+        /** */}
+        <a 
+          href="https://paypal.me/SpeechStudio?country.x=US&locale.x=en_US" 
+          className="donate-link"
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          💖 Donate! To Help Improve The Website 
+        </a>
+      </div>
+    </footer>
+  );
+
+
   return (
     <div className="auth-container">
     <div className="auth-grid">
@@ -78,6 +118,9 @@ const Auth = () => {
         <h1 className="gradient-title animate-gradient">
           Welcome to Speech Studio
         </h1>
+        <div className="mobile-notice">
+        <span>✨ Experience all features on desktop. Better on Website!</span>
+      </div>
         <div className="bio-text">
           <p className="lead">Did you know 1 in 5 people experience dyslexia? Meet Speech Studio, an interactive web tool -</p>
           <p>A free, unlimited text-to-speech solution created by Elijah Jackson, a passionate high schooler. 
@@ -188,8 +231,8 @@ const Auth = () => {
   </div>
 </div>
 </div>
+<Footer />
 </div>
-
   );
 };
 
