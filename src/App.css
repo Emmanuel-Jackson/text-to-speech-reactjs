@@ -1217,7 +1217,7 @@ input :focus{
   border-radius: 25px;
   text-decoration: none;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 13.2px;
   transition: transform 0.3s ease;
 }
 
@@ -1405,7 +1405,7 @@ input :focus{
   .auth-card {
     padding: 1rem;
     width: 100%;
-    max-width: 343px;
+    max-width: 320px;
   }
 
   .auth-heading {
@@ -1434,13 +1434,21 @@ input :focus{
     font-size: 0.9rem;
   }
 
-  .google-login {
-    width: 90% !important;
+  .google-login div {
+    transform: scale(0.9); /* Even smaller for very small screens */
   }
 }
 
 /* Add these for better mobile experience */
 @media (max-width: 480px) {
+
+  .footer-right{
+    width: 86%;
+  }
+
+  .google-login div {
+    transform: scale(0.9); /* Even smaller for very small screens */
+  }
   .gradient-title {
     font-size: 2rem;
   }
@@ -1454,7 +1462,7 @@ input :focus{
   }
 
   .auth-card {
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .auth-input {

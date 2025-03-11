@@ -119,12 +119,12 @@ const Auth = () => {
           Welcome to Speech Studio
         </h1>
         <div className="mobile-notice">
-        <span>✨ Experience all features on desktop. Better on Website!</span>
+        <span> On a mobile device?<br /> ✨ Experience all features on a desktop.</span>
       </div>
         <div className="bio-text">
           <p className="lead">Did you know 1 in 5 people experience dyslexia? Meet Speech Studio, an interactive web tool -</p>
-          <p>A free, unlimited text-to-speech solution created by Elijah Jackson, a passionate high schooler. 
-            Born from the need for accessible dyslexia support, Speech Studio breaks down barriers with:
+          <p className="description-bio">A <strong>free, unlimited text-to-speech solution</strong> developed by <strong>Elijah Jackson</strong>, a passionate high school developer. 
+          Inspired by the need for better dyslexia support, <strong>Speech Studio</strong> helps break down barriers with:
           </p>
           <ul className="feature-list">
             <li>✅ 100% free unlimited conversions</li>
@@ -204,6 +204,7 @@ const Auth = () => {
       </div>
 
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+        <div className="google-login">
         <GoogleLogin
           onSuccess={() => {
             window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
@@ -212,6 +213,7 @@ const Auth = () => {
           shape="pill"
           width="350"
         />
+        </div>
       </GoogleOAuthProvider>
 
       <p className="auth-switch">
