@@ -356,8 +356,8 @@ useEffect(() => {
 
   </header>
   <div className="mobile-notice">
-  <span>✨ Experience all features on desktop. Better on Website!</span>
-</div>
+  <span> On a mobile device?<br /> ✨ Experience all features on a desktop.</span>
+  </div>
   <div className="main-content">
     <div className="text-areas">
       <div className="input-section">
