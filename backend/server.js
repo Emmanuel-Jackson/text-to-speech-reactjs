@@ -4,31 +4,9 @@ const connectDB = require('./config/db');
 const passport = require('passport');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
-const aiRoutes = require('./routes/ai');
-const rateLimit = require('express-rate-limit');
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // 100 requests per window
-});
 
 const app = express();
-
-// Enhanced CORS configuration
-const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL,
-    'https://speechstudio.vercel.app',
-    'http://localhost:3000' // Add local development
-  ],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-};
-
-// Middleware order matters!
+// Add before routes
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -41,30 +19,32 @@ app.use((req, res, next) => {
   );
   next();
 });
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Explicit preflight handling
+// Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'https://speechstudio.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+ 
+  // Handle preflight requests
+app.options('*', cors());
 app.use(express.json());
 app.use(passport.initialize());
 require('./config/passport');
 
+
 // Database connection
 connectDB();
 
+
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/ai', limiter);
-app.use('/api/ai', aiRoutes);
 
-// Enhanced health check
+
+// Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK',
-    services: {
-      database: 'connected',
-      ai: 'enabled'
-    }
-  });
+  res.status(200).json({ status: 'OK' });
 });
 
 // Error handling middleware

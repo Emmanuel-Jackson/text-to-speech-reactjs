@@ -55,10 +55,6 @@ export default function MainInterface() {
     const [selectedLanguage, setSelectedLanguage] = useState(
       localStorage.getItem('selectedLanguage') || 'en'
     );
-    const [chatOpen, setChatOpen] = useState(false);
-    const [messages, setMessages] = useState([]);
-    const [inputMessage, setInputMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     
     useEffect(() => {
       const words = text.split(/\s+/).filter(word => word).length;
@@ -271,60 +267,6 @@ useEffect(() => {
   useEffect(() => {
     localStorage.setItem('savedText', text);
   }, [text]);
-
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
-  
-    try {
-      setIsLoading(true);
-      const token = localStorage.getItem('token');
-      console.log('[FRONTEND] Sending message with token:', token?.substring(0, 15));
-  
-      const newMessage = { text: inputMessage, sender: 'user' };
-      setMessages(prev => [...prev, newMessage]);
-      setInputMessage('');
-  
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/ai/chat`,
-        { message: inputMessage },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 10000
-        }
-      );
-  
-      console.log('[FRONTEND] Received response:', response.data);
-      
-      if (!response.data?.reply) {
-        throw new Error('Invalid response from server');
-      }
-  
-      const aiResponse = { text: response.data.reply, sender: 'ai' };
-      setMessages(prev => [...prev, aiResponse]);
-  
-    } catch (error) {
-      console.error('[FRONTEND] Full Error:', {
-        message: error.message,
-        response: error.response?.data,
-        code: error.code
-      });
-      
-      const errorMessage = {
-        text: error.response?.data?.details || 
-             (error.message.includes('quota') 
-               ? 'Free AI quota reached. Please try again later.'
-               : 'Service temporarily unavailable'),
-        sender: 'ai'
-      };
-      
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const Footer = () => (
     <footer className="app-footer">
@@ -585,53 +527,8 @@ useEffect(() => {
           Processing {fileInputRef.current?.files[0]?.type.startsWith('image/') ? 'image' : 'PDF'}...
         </div>
       )}
-{/* Simplified Chat Interface */}
-<div className="ai-bot-container">
-  <button 
-    className="ai-bot-button"
-    onClick={() => setChatOpen(!chatOpen)}
-  >
-    <FaRobot className="bot-icon" />
-  </button>
 
-  {chatOpen && (
-    <div className="ai-chat-window">
-      <div className="chat-header">
-        <h4>AI Assistant</h4>
-        <button className="close-btn" onClick={() => setChatOpen(false)}>
-          <FaTimes />
-        </button>
-      </div>
-      
-      <div className="chat-messages">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender}`}>
-            <div className="message-content">{msg.text}</div>
-          </div>
-        ))}
-        {isLoading && <div className="loading">AI is thinking...</div>}
-      </div>
-
-      <div className="chat-input">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Type your message..."
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={isLoading}
-        />
-        <button 
-          onClick={handleSendMessage}
-          disabled={isLoading || !inputMessage.trim()}
-        >
-          Send
-        </button>
-      </div>
-    </div>
-  )}
-</div>
-      <Footer />
-</div>
+    <Footer />
+  </div>
 );
 }
