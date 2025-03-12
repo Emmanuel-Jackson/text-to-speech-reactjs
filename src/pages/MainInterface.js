@@ -314,8 +314,9 @@ useEffect(() => {
       
       const errorMessage = {
         text: error.response?.data?.details || 
-             error.response?.data?.error ||
-             'Service temporarily unavailable',
+             (error.message.includes('quota') 
+               ? 'Free AI quota reached. Please try again later.'
+               : 'Service temporarily unavailable'),
         sender: 'ai'
       };
       
