@@ -288,18 +288,31 @@ useEffect(() => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
-          }
+          },
+          timeout: 10000
         }
       );
   
+      if (!response.data?.reply) {
+        throw new Error('Invalid response from server');
+      }
+  
       const aiResponse = { text: response.data.reply, sender: 'ai' };
       setMessages(prev => [...prev, aiResponse]);
+  
     } catch (error) {
-      console.error('Chat Error:', error);
-      const errorMessage = { 
-        text: "Sorry, I'm having trouble connecting. Please try again later.",
+      console.error('Full Frontend Error:', {
+        message: error.message,
+        response: error.response?.data,
+        code: error.code
+      });
+      
+      const errorMessage = {
+        text: error.response?.data?.details || 
+             'Service temporarily unavailable. Please try again later.',
         sender: 'ai'
       };
+      
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
