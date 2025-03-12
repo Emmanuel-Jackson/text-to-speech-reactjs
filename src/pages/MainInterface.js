@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
-import { FaPlay, FaPause, FaStop, FaCopy, FaSun, FaMoon, FaCog, FaTimes, FaRunning, FaFileUpload, FaSignOutAlt, FaStepBackward, FaStepForward } from "react-icons/fa";
+import { FaPlay, FaPause, FaStop, FaCopy, FaSun, FaMoon, FaCog, FaTimes, FaRunning, FaFileUpload, FaSignOutAlt, FaStepBackward, FaStepForward, FaRobot } from "react-icons/fa";
 import { getDocument } from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { createWorker } from 'tesseract.js';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 export default function MainInterface() {
   const [text, setText] = useState("");
@@ -54,6 +55,11 @@ export default function MainInterface() {
     const [selectedLanguage, setSelectedLanguage] = useState(
       localStorage.getItem('selectedLanguage') || 'en'
     );
+    const [chatOpen, setChatOpen] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [inputMessage, setInputMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    
     useEffect(() => {
       const words = text.split(/\s+/).filter(word => word).length;
       const minutes = words / (150 * currentSettings.rate); // 150 words/min base speed
@@ -265,6 +271,40 @@ useEffect(() => {
   useEffect(() => {
     localStorage.setItem('savedText', text);
   }, [text]);
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+  
+    try {
+      setIsLoading(true);
+      const newMessage = { text: inputMessage, sender: 'user' };
+      setMessages(prev => [...prev, newMessage]);
+      setInputMessage('');
+  
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/ai/chat`,
+        { message: inputMessage },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+  
+      const aiResponse = { text: response.data.reply, sender: 'ai' };
+      setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Chat Error:', error);
+      const errorMessage = { 
+        text: "Sorry, I'm having trouble connecting. Please try again later.",
+        sender: 'ai'
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const Footer = () => (
     <footer className="app-footer">
@@ -525,7 +565,52 @@ useEffect(() => {
           Processing {fileInputRef.current?.files[0]?.type.startsWith('image/') ? 'image' : 'PDF'}...
         </div>
       )}
+{/* Simplified Chat Interface */}
+<div className="ai-bot-container">
+  <button 
+    className="ai-bot-button"
+    onClick={() => setChatOpen(!chatOpen)}
+  >
+    <FaRobot className="bot-icon" />
+  </button>
 
+  {chatOpen && (
+    <div className="ai-chat-window">
+      <div className="chat-header">
+        <h4>AI Assistant</h4>
+        <button className="close-btn" onClick={() => setChatOpen(false)}>
+          <FaTimes />
+        </button>
+      </div>
+      
+      <div className="chat-messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message ${msg.sender}`}>
+            <div className="message-content">{msg.text}</div>
+          </div>
+        ))}
+        {isLoading && <div className="loading">AI is thinking...</div>}
+      </div>
+
+      <div className="chat-input">
+        <input
+          type="text"
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          placeholder="Type your message..."
+          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+          disabled={isLoading}
+        />
+        <button 
+          onClick={handleSendMessage}
+          disabled={isLoading || !inputMessage.trim()}
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  )}
+</div>
       <Footer />
 </div>
 );

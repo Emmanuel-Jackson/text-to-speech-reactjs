@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const passport = require('passport');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 // Add before routes
@@ -38,6 +39,7 @@ connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
