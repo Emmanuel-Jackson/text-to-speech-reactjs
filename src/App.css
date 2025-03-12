@@ -14,7 +14,7 @@ body {
 
 .light-mode {
   background-color: #ffffff;
-  color: #000000;
+  color: #333;
 }
 
 .app-container {
@@ -1154,7 +1154,6 @@ input :focus{
  grid-template-columns: 1fr 1fr 1fr;
  gap: 2rem;
  padding: 2rem 5%;
- background: white;
  border-top: 1px solid #333;
  margin-top: auto;
 }
