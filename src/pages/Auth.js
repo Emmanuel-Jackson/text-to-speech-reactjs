@@ -71,7 +71,7 @@ const Auth = () => {
   };
 
   const Footer = () => (
-    <footer className="app-footer">
+    <footer className="app-footer-auth">
       <div className="footer-left">
         <h3 className="footer-title">Speech Studio</h3>
         <p>Developed by Elijah Jackson</p>

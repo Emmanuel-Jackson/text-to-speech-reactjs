@@ -9,7 +9,6 @@ import { createWorker } from 'tesseract.js';
 import { useAuth } from '../context/AuthContext';
 
 export default function MainInterface() {
-  // State variables
   const [text, setText] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -27,13 +26,7 @@ export default function MainInterface() {
   const [showCopyPopup, setShowCopyPopup] = useState(false);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const [isProcessing, setIsProcessing] = useState(false);
-  const [fontSettings, setFontSettings] = useState({
-    family: 'OpenDyslexic',
-    size: 16,
-    spacing: 1.5
-  });
 
-  // Refs and hooks
   const wordsRef = useRef([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -42,7 +35,7 @@ export default function MainInterface() {
   const outputRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Text-to-speech functions
+  // Handle play/pause functionality
   const handleSpeak = () => {
     if (!text) return;
 
@@ -61,8 +54,10 @@ export default function MainInterface() {
     // Split text into words
     wordsRef.current = text.split(/\s+/).filter(word => word);
 
-    // Create a new utterance
-    const utterance = new SpeechSynthesisUtterance(wordsRef.current.join(' '));
+    // Create a new utterance starting from the current word
+    const utterance = new SpeechSynthesisUtterance(
+      wordsRef.current.slice(currentWordIndex).join(' ')
+    );
     utteranceRef.current = utterance;
 
     // Set speech parameters
@@ -75,7 +70,6 @@ export default function MainInterface() {
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
-      setCurrentWordIndex(0);
     };
 
     utterance.onend = () => {
@@ -96,6 +90,15 @@ export default function MainInterface() {
     synthesis.speak(utterance);
   };
 
+  // Handle skip functionality
+  const handleSkip = (steps) => {
+    const newIndex = Math.max(0, 
+      Math.min(currentWordIndex + steps, wordsRef.current.length - 1)
+    );
+    setCurrentWordIndex(newIndex);
+  };
+
+  // Handle cancel functionality
   const handleCancel = () => {
     synthesis.cancel();
     setIsSpeaking(false);
@@ -122,41 +125,30 @@ export default function MainInterface() {
     }
   }, [volume, pitch, rate]);
 
-  // Skip functionality
-  const handleSkip = (steps) => {
-    const newIndex = Math.max(0, 
-      Math.min(currentWordIndex + steps, wordsRef.current.length - 1)
-    );
-    
-    if (isSpeaking) {
-      const utterance = new SpeechSynthesisUtterance(
-        wordsRef.current.slice(newIndex).join(' ')
-      );
-      
-      utterance.volume = volume;
-      utterance.pitch = pitch;
-      utterance.rate = rate;
-      utterance.voice = selectedVoice;
-      
-      utterance.onstart = () => {
-        setIsSpeaking(true);
-        setIsPaused(false);
-        setCurrentWordIndex(newIndex);
-      };
-
-      utterance.onend = () => {
-        setIsSpeaking(false);
-        setIsPaused(false);
-        setCurrentWordIndex(-1);
-      };
-
-      synthesis.cancel();
-      synthesis.speak(utterance);
-      utteranceRef.current = utterance;
-    } else {
-      setCurrentWordIndex(newIndex);
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (outputRef.current && currentWordIndex !== -1) {
+      const words = outputRef.current.getElementsByClassName('word');
+      if (words.length > 0 && currentWordIndex < words.length) {
+        words[currentWordIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
     }
-  };
+  }, [currentWordIndex]);
+
+  // Load voices
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = synthesis.getVoices();
+      setVoices(availableVoices);
+      setSelectedVoice(availableVoices[0]);
+    };
+    synthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    return () => synthesis.onvoiceschanged = null;
+  }, []);
 
   // File upload handler
   const handleFileUpload = async (e) => {
@@ -194,31 +186,6 @@ export default function MainInterface() {
       setIsProcessing(false);
     }
   };
-
-  // Auto-scroll functionality
-  useEffect(() => {
-    if (outputRef.current && currentWordIndex !== -1) {
-      const words = outputRef.current.getElementsByClassName('word');
-      if (words.length > 0 && currentWordIndex < words.length) {
-        words[currentWordIndex].scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
-    }
-  }, [currentWordIndex]);
-
-  // Load voices
-  useEffect(() => {
-    const loadVoices = () => {
-      const availableVoices = synthesis.getVoices();
-      setVoices(availableVoices);
-      setSelectedVoice(availableVoices[0]);
-    };
-    synthesis.onvoiceschanged = loadVoices;
-    loadVoices();
-    return () => synthesis.onvoiceschanged = null;
-  }, []);
 
   // Dark mode
   useEffect(() => {
@@ -372,9 +339,9 @@ export default function MainInterface() {
             <textarea
               className="text-area"
               style={{
-                fontFamily: fontSettings.family,
-                fontSize: `${fontSettings.size}px`,
-                letterSpacing: `${fontSettings.spacing}px`
+                fontFamily: 'OpenDyslexic',
+                fontSize: '16px',
+                letterSpacing: '1.5px'
               }}
               placeholder="Enter Text..."
               value={text}
@@ -412,7 +379,7 @@ export default function MainInterface() {
           <button
             className="control-icon"
             onClick={() => handleSkip(-1)}
-            disabled={!text || (isSpeaking && !isPaused)}
+            disabled={isSpeaking && !isPaused} // Disable during playback
           >
             <FaStepBackward />
           </button>
@@ -427,7 +394,7 @@ export default function MainInterface() {
           <button
             className="control-icon"
             onClick={() => handleSkip(1)}
-            disabled={!text || (isSpeaking && !isPaused)}
+            disabled={isSpeaking && !isPaused} // Disable during playback
           >
             <FaStepForward />
           </button>
