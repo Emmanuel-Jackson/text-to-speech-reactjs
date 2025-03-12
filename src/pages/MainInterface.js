@@ -58,7 +58,10 @@ export default function MainInterface() {
       return;
     }
 
+    // Split text into words
     wordsRef.current = text.split(/\s+/).filter(word => word);
+
+    // Create a new utterance
     const utterance = new SpeechSynthesisUtterance(wordsRef.current.join(' '));
     utteranceRef.current = utterance;
 
@@ -68,6 +71,7 @@ export default function MainInterface() {
     utterance.rate = rate;
     utterance.voice = selectedVoice;
 
+    // Event handlers
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
@@ -88,6 +92,7 @@ export default function MainInterface() {
       }
     };
 
+    // Start speaking
     synthesis.speak(utterance);
   };
 
