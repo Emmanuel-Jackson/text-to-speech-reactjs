@@ -277,6 +277,9 @@ useEffect(() => {
   
     try {
       setIsLoading(true);
+      const token = localStorage.getItem('token');
+      console.log('[FRONTEND] Sending message with token:', token?.substring(0, 15));
+  
       const newMessage = { text: inputMessage, sender: 'user' };
       setMessages(prev => [...prev, newMessage]);
       setInputMessage('');
@@ -286,13 +289,15 @@ useEffect(() => {
         { message: inputMessage },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           timeout: 10000
         }
       );
   
+      console.log('[FRONTEND] Received response:', response.data);
+      
       if (!response.data?.reply) {
         throw new Error('Invalid response from server');
       }
@@ -301,7 +306,7 @@ useEffect(() => {
       setMessages(prev => [...prev, aiResponse]);
   
     } catch (error) {
-      console.error('Full Frontend Error:', {
+      console.error('[FRONTEND] Full Error:', {
         message: error.message,
         response: error.response?.data,
         code: error.code
@@ -309,7 +314,8 @@ useEffect(() => {
       
       const errorMessage = {
         text: error.response?.data?.details || 
-             'Service temporarily unavailable. Please try again later.',
+             error.response?.data?.error ||
+             'Service temporarily unavailable',
         sender: 'ai'
       };
       
