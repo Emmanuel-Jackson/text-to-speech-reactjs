@@ -317,6 +317,51 @@ useEffect(() => {
     synthesis.speak(utterance);
   };
 
+  // Add this useEffect to handle parameter changes
+useEffect(() => {
+  if (isSpeaking && !isPaused) {
+    // Create new utterance with current parameters
+    const utterance = new SpeechSynthesisUtterance(
+      wordsRef.current.slice(currentWordIndex).join(' ')
+    );
+    utterance.volume = volume;
+    utterance.pitch = pitch;
+    utterance.rate = rate;
+    utterance.voice = selectedVoice;
+    
+    synthesis.cancel();
+    synthesis.speak(utterance);
+  }
+}, [volume, pitch, rate]); // Trigger on parameter changes
+
+// Add this function for skipping
+const handleSkip = (steps) => {
+  const newIndex = Math.max(0, 
+    Math.min(currentWordIndex + steps, wordsRef.current.length - 1)
+  );
+  setCurrentWordIndex(newIndex);
+  
+  if (isSpeaking) {
+    // Restart speech from new position
+    const utterance = new SpeechSynthesisUtterance(
+      wordsRef.current.slice(newIndex).join(' ')
+    );
+    utteranceRef.current = utterance;
+    // Set speech parameters
+    utterance.volume = volume;
+    utterance.pitch = pitch;
+    utterance.rate = rate;
+    utterance.voice = selectedVoice;
+    
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setIsPaused(false);
+    };
+    
+    synthesis.speak(utterance);
+  }
+};
+
   return (
   <div className="app-container">
   <header className="header">
@@ -389,42 +434,45 @@ useEffect(() => {
             </button>
 
             {showSettings && (
-          <div className="dropdown-content">
-                   <label>
-                     Volume:
-                     <input
-                       type="range"
-                       min="0"
-                       max="1"
-                       step="0.1"
-                       value={volume}
-                       onChange={(e) => setVolume(parseFloat(e.target.value))}
-                     />
-                   </label>
-                   <label>
-                     Pitch:
-                     <input
-                       type="range"
-                       min="0.1"
-                       max="2"
-                       step="0.1"
-                       value={pitch}
-                       onChange={(e) => setPitch(parseFloat(e.target.value))}
-                     />
-                   </label>
-                   <label>
-                     Speed:
-                     <input
-                       type="range"
-                       min="0.5"
-                       max="2"
-                       step="0.1"
-                       value={rate}
-                       onChange={(e) => setRate(parseFloat(e.target.value))}
-                     />
-                   </label>
-                 </div>
-               )}
+  <div className="dropdown-content">
+    <label>
+      Speed:
+      <input
+        type="range"
+        min="0.5"
+        max="2"
+        step="0.1"
+        value={rate}
+        onChange={(e) => setRate(parseFloat(e.target.value))}
+      />
+      {rate}x
+    </label>
+    <label>
+      Pitch:
+      <input
+        type="range"
+        min="0.1"
+        max="2"
+        step="0.1"
+        value={pitch}
+        onChange={(e) => setPitch(parseFloat(e.target.value))}
+      />
+      {pitch}
+    </label>
+    <label>
+      Volume:
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.1"
+        value={volume}
+        onChange={(e) => setVolume(parseFloat(e.target.value))}
+      />
+      {volume}
+    </label>
+  </div>
+)}
           </div>
           <div className="voice-dropdown">
             <select
@@ -482,31 +530,31 @@ useEffect(() => {
     </div>
 
     <div className="controls">
-  <button 
-    className="control-icon" 
-    onClick={() => setCurrentWordIndex(prev => Math.max(0, prev - 1))}
+  <button
+    className="control-icon"
+    onClick={() => handleSkip(-1)}
     disabled={!text || (isSpeaking && !isPaused)}
   >
     <FaStepBackward />
   </button>
-  
-  <button 
-    className="control-button" 
-    onClick={handleSpeak} 
+
+  <button
+    className="control-button"
+    onClick={handleSpeak}
     disabled={!text}
   >
     {isSpeaking && !isPaused ? <FaPause /> : <FaPlay />}
     {isSpeaking && !isPaused ? "Pause" : "Play"}
   </button>
 
-  <button 
-    className="control-icon" 
-    onClick={() => setCurrentWordIndex(prev => prev + 1)}
+  <button
+    className="control-icon"
+    onClick={() => handleSkip(1)}
     disabled={!text || (isSpeaking && !isPaused)}
   >
     <FaStepForward />
   </button>
-  
+
   <button
     className="control-button"
     onClick={handleCancel}
