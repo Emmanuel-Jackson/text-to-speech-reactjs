@@ -482,16 +482,6 @@ body {
   }
 }
 
-/* Dyslexia Font */
-/* Replace the @font-face with this */
-@font-face {
-  font-family: 'OpenDyslexic';
-  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.woff') format('woff'),
-       url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
 /* Add this if missing */
 .text-area, .output {
   font-family: 'OpenDyslexic', sans-serif;

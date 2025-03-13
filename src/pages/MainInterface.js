@@ -120,10 +120,10 @@ useEffect(() => {
 
 
     // Add dyslexia font effect
+
     useEffect(() => {
-      document.documentElement.style.setProperty('--dyslexia-font', fontFamily);
-    }, [fontFamily]);
- 
+      document.documentElement.style.setProperty('--dyslexia-font', fontSettings.family);
+    }, [fontSettings.family]);
 
 
 
