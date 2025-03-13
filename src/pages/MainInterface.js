@@ -71,10 +71,20 @@ useEffect(() => {
   if (outputRef.current && currentWordIndex !== -1) {
     const words = outputRef.current.getElementsByClassName('word');
     if (words.length > 0 && currentWordIndex < words.length) {
-      words[currentWordIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+      // Add a small delay for smoothness
+      setTimeout(() => {
+        words[currentWordIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        });
+        
+        // Add temporary highlight class
+        words[currentWordIndex].classList.add('temp-highlight');
+        setTimeout(() => {
+          words[currentWordIndex].classList.remove('temp-highlight');
+        }, 500);
+      }, 50);
     }
   }
 }, [currentWordIndex]);
@@ -145,22 +155,21 @@ useEffect(() => {
 
   useEffect(() => {
     const loadVoices = () => {
-      const availableVoices = window.speechSynthesis.getVoices();
+      const availableVoices = synthesis.getVoices();
+      setVoices(availableVoices);
       if (availableVoices.length > 0) {
-        setVoices(availableVoices);
-        // Try to find a default voice that's likely available
-        const defaultVoice = availableVoices.find(v => v.lang === 'en-US') || availableVoices[0];
-        setSelectedVoice(defaultVoice);
+        setSelectedVoice(availableVoices[0]);
       }
     };
-  
-    // Load voices when they become available
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-    
-    // Initial load
+
+
+    synthesis.onvoiceschanged = loadVoices;
     loadVoices();
+
+
+    return () => {
+      synthesis.onvoiceschanged = null;
+    };
   }, []);
 
 
@@ -210,43 +219,39 @@ useEffect(() => {
     }
   }, [text]);
 
-
-
-
   const handleSpeak = () => {
-    // Cancel any existing speech
-    synthesis.cancel();
-  
+    if (isSpeaking && !isPaused) {
+      synthesis.pause();
+      setIsPaused(true);
+      return;
+    }
+
+    if (isSpeaking && isPaused) {
+      synthesis.resume();
+      setIsPaused(false);
+      return;
+    }
+
     if (!text) return;
-  
-    // Split text into sentences for better handling
-    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-    
-    // Create new utterance
-    const utterance = new SpeechSynthesisUtterance();
-    utterance.text = text;
+
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.volume = volume;
     utterance.pitch = pitch;
     utterance.rate = rate;
-    
-    // Only set voice if available
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-  
-    // Event handlers
+    utterance.voice = selectedVoice;
+
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
       setCurrentWordIndex(0);
     };
-  
+
     utterance.onend = () => {
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentWordIndex(-1);
     };
-  
+
     utterance.onboundary = (event) => {
       if (event.name === "word") {
         const charIndex = event.charIndex;
@@ -254,8 +259,7 @@ useEffect(() => {
         setCurrentWordIndex(currentWord);
       }
     };
-  
-    // Speak using the synthesis object
+
     synthesis.speak(utterance);
   };
 
@@ -291,29 +295,7 @@ useEffect(() => {
     localStorage.setItem('savedText', text);
   }, [text]);
 
-  class ErrorBoundary extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { hasError: false };
-    }
-  
-    static getDerivedStateFromError(error) {
-      return { hasError: true };
-    }
-  
-    componentDidCatch(error, errorInfo) {
-      console.error("React Error:", error, errorInfo);
-    }
-  
-    render() {
-      if (this.state.hasError) {
-        return <div className="error-fallback">Something went wrong. Please refresh.</div>;
-      }
-      return this.props.children;
-    }
-  }
-  
-  // Wrap your MainInterface component with this
+
   const Footer = () => (
     <footer className="app-footer">
       <div className="footer-left">
@@ -367,7 +349,6 @@ useEffect(() => {
 
 
   return (
-    <ErrorBoundary>
   <div className="app-container">
   <header className="header">
     <div className="header-left">
@@ -527,14 +508,15 @@ useEffect(() => {
 
 <div className="output-section">
   <div className="output" ref={outputRef}>
-    {text.split(/\s+/).map((word, index) => (
-      <span
-        key={index}
-        className={`word ${index === currentWordIndex ? "highlight" : ""}`}
-      >
-        {word}{" "}
-      </span>
-    ))}
+  {text.split(/\s+/).map((word, index) => (
+                <span
+                  key={index}
+                  className={`word ${index === currentWordIndex ? "highlight" : ""}`}
+                  onClick={() => speakWord(word)}
+                >
+                  {word}{" "}
+                </span>
+              ))}
   </div>
 </div>
     </div>
@@ -576,6 +558,5 @@ useEffect(() => {
 
     <Footer />
   </div>
-  </ErrorBoundary>
 );
 }

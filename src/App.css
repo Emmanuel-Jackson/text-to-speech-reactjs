@@ -1,9 +1,8 @@
-@font-face {
-  font-family: 'OpenDyslexic';
-  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.woff') format('woff'),
-       url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
+@import url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/css/open-dyslexic.css');
+
+/* Then override the font-family */
+.text-area, .output {
+  font-family: 'OpenDyslexic', sans-serif !important;
 }
 /* General Styles */
 body {
@@ -199,10 +198,6 @@ body {
   overflow-y: auto;
 }
 
-.word {
-  transition: all 0.3s ease;
-}
-
 .word.highlight {
   background-color: #ff6b6b;
   color: white;
@@ -210,7 +205,15 @@ body {
   border-radius: 4px;
   animation: highlight 0.5s ease;
 }
+.word {
+  transition: all 0.2s ease;
+}
 
+.temp-highlight {
+  background-color: rgba(255, 107, 107, 0.3);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
 
 @keyframes highlight {
   from {
