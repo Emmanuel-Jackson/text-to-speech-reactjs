@@ -1352,6 +1352,10 @@ input :focus{
     display: none;
   }
 
+  .text-area, .output {
+    font-family: 'OpenDyslexic', sans-serif !important;
+  }
+
   /* Input/Output Layout */
   .text-area {
     height: 150px;
