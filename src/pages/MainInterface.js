@@ -35,11 +35,13 @@ export default function MainInterface() {
 
 
     // New features state
-    const [fontFamily, setFontFamily] = useState('Arial');
-    const [fontSettings, setFontSettings] = useState({
-      family: 'OpenDyslexic',
-      size: 16,
-      spacing: 1.5
+    const [fontSettings, setFontSettings] = useState(() => {
+      const savedFont = localStorage.getItem('fontSettings');
+      return savedFont ? JSON.parse(savedFont) : {
+        family: 'OpenDyslexic',
+        size: 16,
+        spacing: 1.5
+      };
     });
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -65,7 +67,6 @@ export default function MainInterface() {
       const seconds = Math.floor((minutes % 1) * 60);
       setEstimatedTime(`${Math.floor(minutes)}:${seconds.toString().padStart(2, '0')}`);
     }, [text, currentSettings.rate]);
-  // Auto-scroll functionality
 // Auto-scroll functionality
 useEffect(() => {
   if (outputRef.current && currentWordIndex !== -1) {
@@ -117,19 +118,16 @@ useEffect(() => {
     }
   };
  
-
-
     // Add dyslexia font effect
+   // useEffect(() => {
+      //document.documentElement.style.setProperty('--dyslexia-font', fontFamily);
+   // }, [fontFamily]);
+
     useEffect(() => {
-      document.documentElement.style.setProperty('--dyslexia-font', fontFamily);
-    }, [fontFamily]);
+      localStorage.setItem('fontSettings', JSON.stringify(fontSettings));
+    }, [fontSettings]);
  
-
-
-
-
     // Document upload handler
-
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -147,20 +145,14 @@ useEffect(() => {
     const loadVoices = () => {
       const availableVoices = synthesis.getVoices();
       setVoices(availableVoices);
-      if (availableVoices.length > 0) {
-        setSelectedVoice(availableVoices[0]);
+      if (availableVoices.length > 0 && !selectedVoice) {
+        setSelectedVoice(availableVoices.find(v => v.lang.includes(selectedLanguage)) || availableVoices[0]);
       }
     };
-
-
     synthesis.onvoiceschanged = loadVoices;
     loadVoices();
-
-
-    return () => {
-      synthesis.onvoiceschanged = null;
-    };
-  }, []);
+    return () => synthesis.onvoiceschanged = null;
+  }, [selectedLanguage]);
 
 
   useEffect(() => {
@@ -208,8 +200,6 @@ useEffect(() => {
       setIsTyping(false);
     }
   }, [text]);
-
-
 
 
   const handleSpeak = () => {
@@ -424,8 +414,12 @@ useEffect(() => {
             <FaTimes />
           </button>
           <div className="settings-dropdown">
-            <button className="icon-button" onClick={() => setShowSettings(!showSettings)}>
-              <FaCog />
+          <button 
+                className="icon-button" 
+                onClick={() => setShowSettings(!showSettings)}
+                disabled={isSpeaking && !isPaused}
+              >
+                <FaCog style={{ color: (isSpeaking && !isPaused) ? '#666' : 'inherit' }} />
             </button>
 
 
@@ -468,38 +462,57 @@ useEffect(() => {
                )}
           </div>
           <div className="voice-dropdown">
-            <select
-              className={`voice-select ${darkMode ? 'dark' : 'light'}`}
-              value={selectedVoice?.name || ""}
-              onChange={(e) => setSelectedVoice(voices.find(v => v.name === e.target.value))}
-            >
-              {voices.map((voice) => (
-                <option key={voice.name} value={voice.name}>
-                  {voice.name}
-                </option>
-              ))}
-            </select>
+          <select
+                className={`voice-select ${darkMode ? 'dark' : 'light'}`}
+                value={selectedVoice?.name || ""}
+                onChange={(e) => setSelectedVoice(voices.find(v => v.name === e.target.value))}
+                disabled={isSpeaking && !isPaused}
+              >
+                {voices.map((voice) => (
+                  <option key={voice.name} value={voice.name}>
+                    {voice.name}
+                  </option>
+                ))}
+              </select>
           </div>
         </div>
         <textarea
-          className="text-area"
-          style={{
-            fontFamily: fontSettings.family,
-            fontSize: `${fontSettings.size}px`,
-            letterSpacing: `${fontSettings.spacing}px`
-           }}
-            placeholder="Enter Text..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-        />
+              className="text-area"
+              style={{
+                fontFamily: fontSettings.family,
+                fontSize: `${fontSettings.size}px`,
+                letterSpacing: `${fontSettings.spacing}px`,
+                backgroundColor: darkMode ? '#2d2d2d' : '#ffffff'
+              }}
+              placeholder="Enter Text..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              spellCheck={true}
+            />
+        <div className="font-controls">
         <select
-          value={fontSettings.family}
-          onChange={(e) => setFontSettings(prev => ({...prev, family: e.target.value}))}
-          >
-        <option value="OpenDyslexic">OpenDyslexic</option>
-        <option value="Arial">Arial</option>
-        <option value="Comic Sans MS">Comic Sans</option>
-        </select>
+                value={fontSettings.family}
+                onChange={(e) => setFontSettings(prev => ({...prev, family: e.target.value}))}
+                className={`font-select ${darkMode ? 'dark' : 'light'}`}
+                disabled={isSpeaking && !isPaused}
+              >
+                <option value="OpenDyslexic">OpenDyslexic</option>
+                <option value="Arial">Arial</option>
+                <option value="Comic Sans MS">Comic Sans</option>
+          </select>
+          <select
+                value={selectedLanguage}
+                onChange={(e) => {
+                  setSelectedLanguage(e.target.value);
+                  localStorage.setItem('selectedLanguage', e.target.value);
+                }}
+                className={`language-select ${darkMode ? 'dark' : 'light'}`}
+              >
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+              </select>
+        </div>
         <div className="word-count">
           {text.split(/\s+/).filter(word => word).length} words, {text.length} characters
         </div>
@@ -525,7 +538,7 @@ useEffect(() => {
 
 
     <div className="controls">
- 
+
   <button
     className="control-button"
     onClick={handleSpeak}

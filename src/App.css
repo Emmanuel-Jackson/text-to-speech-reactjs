@@ -1,5 +1,16 @@
-@import url('https://cdnjs.cloudflare.com/ajax/libs/open-dyslexic/1.0.0/style.css');
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/OpenDyslexic-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
 /* Then override the font-family */
 .text-area, .output {
   font-family: 'OpenDyslexic', sans-serif !important;
@@ -1147,7 +1158,7 @@ input :focus{
   gap: 2rem;
   padding: 2rem 5%;
   background: white;
-  border-top: 1px solid #666;
+  border-top: 1px solid #4ecdc4;
   margin-top: auto;
 }
 
@@ -1607,4 +1618,86 @@ input :focus{
   color: #666;
   font-style: italic;
   text-align: center;
+}
+
+/* Original CSS remains, add these updates: */
+
+/* Font Controls */
+.font-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.font-select, .language-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #4ecdc4;
+  background: rgba(78, 205, 196, 0.1);
+  color: inherit;
+  width: 200px;
+  transition: all 0.3s ease;
+}
+
+.dark-mode .font-select,
+.dark-mode .language-select {
+  background: #2d2d2d;
+  border-color: #4ecdc4;
+}
+
+/* Disabled States */
+button:disabled, select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed !important;
+  background-color: #666 !important;
+  border-color: #666 !important;
+}
+
+/* Modern Text Areas */
+.text-area, .output {
+  width: 100%;
+  min-height: 300px;
+  padding: 1.5rem;
+  border: 2px solid #4ecdc4;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+  background: rgba(78, 205, 196, 0.05);
+  resize: vertical;
+}
+
+.dark-mode .text-area,
+.dark-mode .output {
+  background: #2d2d2d;
+  border-color: #3aa89f;
+  color: #fff;
+}
+
+/* Equal Width Layout */
+.text-areas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .text-areas {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Footer Colors */
+.app-footer {
+  background: #ced4da;
+  color: #333;
+}
+
+.dark-mode .app-footer {
+  background: #121212;
+  color: #fff;
 }
