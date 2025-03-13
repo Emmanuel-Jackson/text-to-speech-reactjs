@@ -20,7 +20,6 @@ const Auth = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const error = urlParams.get('error');
-    console.log('Current Client ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID);
     if (token) {
       localStorage.setItem('token', token);
       verifyAuth().then(() => navigate('/'));
