@@ -1,4 +1,4 @@
-@import url('https://fonts.cdnfonts.com/css/open-dyslexic');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/open-dyslexic/1.0.0/style.css');
 
 /* Then override the font-family */
 .text-area, .output {
