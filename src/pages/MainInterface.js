@@ -145,21 +145,22 @@ useEffect(() => {
 
   useEffect(() => {
     const loadVoices = () => {
-      const availableVoices = synthesis.getVoices();
-      setVoices(availableVoices);
+      const availableVoices = window.speechSynthesis.getVoices();
       if (availableVoices.length > 0) {
-        setSelectedVoice(availableVoices[0]);
+        setVoices(availableVoices);
+        // Try to find a default voice that's likely available
+        const defaultVoice = availableVoices.find(v => v.lang === 'en-US') || availableVoices[0];
+        setSelectedVoice(defaultVoice);
       }
     };
-
-
-    synthesis.onvoiceschanged = loadVoices;
+  
+    // Load voices when they become available
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    
+    // Initial load
     loadVoices();
-
-
-    return () => {
-      synthesis.onvoiceschanged = null;
-    };
   }, []);
 
 
@@ -213,50 +214,39 @@ useEffect(() => {
 
 
   const handleSpeak = () => {
-
-
-    if (isSpeaking && !isPaused) {
-      synthesis.pause();
-      setIsPaused(true);
-      return;
-    }
-
-
-    if (isSpeaking && isPaused) {
-      synthesis.resume();
-      setIsPaused(false);
-      return;
-    }
-
-
+    // Cancel any existing speech
+    synthesis.cancel();
+  
     if (!text) return;
-
-
-    wordsRef.current = text.split(" ");
-    const utterance = new SpeechSynthesisUtterance(text);
-    utteranceRef.current = utterance;
-
-
+  
+    // Split text into sentences for better handling
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    
+    // Create new utterance
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.text = text;
     utterance.volume = volume;
     utterance.pitch = pitch;
     utterance.rate = rate;
-    utterance.voice = selectedVoice;
-
-
+    
+    // Only set voice if available
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+  
+    // Event handlers
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
-      setCurrentWordIndex(-1);
+      setCurrentWordIndex(0);
     };
-
-
+  
     utterance.onend = () => {
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentWordIndex(-1);
     };
-
-
+  
     utterance.onboundary = (event) => {
       if (event.name === "word") {
         const charIndex = event.charIndex;
@@ -264,8 +254,8 @@ useEffect(() => {
         setCurrentWordIndex(currentWord);
       }
     };
-
-
+  
+    // Speak using the synthesis object
     synthesis.speak(utterance);
   };
 
@@ -301,7 +291,29 @@ useEffect(() => {
     localStorage.setItem('savedText', text);
   }, [text]);
 
-
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false };
+    }
+  
+    static getDerivedStateFromError(error) {
+      return { hasError: true };
+    }
+  
+    componentDidCatch(error, errorInfo) {
+      console.error("React Error:", error, errorInfo);
+    }
+  
+    render() {
+      if (this.state.hasError) {
+        return <div className="error-fallback">Something went wrong. Please refresh.</div>;
+      }
+      return this.props.children;
+    }
+  }
+  
+  // Wrap your MainInterface component with this
   const Footer = () => (
     <footer className="app-footer">
       <div className="footer-left">
@@ -355,6 +367,7 @@ useEffect(() => {
 
 
   return (
+    <ErrorBoundary>
   <div className="app-container">
   <header className="header">
     <div className="header-left">
@@ -563,5 +576,6 @@ useEffect(() => {
 
     <Footer />
   </div>
+  </ErrorBoundary>
 );
 }
