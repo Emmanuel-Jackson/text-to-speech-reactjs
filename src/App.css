@@ -1,5 +1,10 @@
-@import url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/css/OpenDyslexic.css');
-
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.woff') format('woff'),
+       url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/webfonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 /* General Styles */
 body {
   margin: 0;
@@ -1144,7 +1149,7 @@ input :focus{
   gap: 2rem;
   padding: 2rem 5%;
   background: white;
-  border-top: 1px solid #333;
+  border-top: 1px solid #666;
   margin-top: auto;
 }
 
