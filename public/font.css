@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('./opendyslexic-master/opendyslexic-master/compiled/OpenDyslexic-Regular.woff') format('woff'),
+         url('./opendyslexic-master/opendyslexic-master/compiled/OpenDyslexic-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'OpenDyslexic';
+    src: url('./opendyslexic-master/opendyslexic-master/compiled/OpenDyslexic-Bold.woff') format('woff'),
+         url('./opendyslexic-master/opendyslexic-master/compiled/OpenDyslexic-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+  }
