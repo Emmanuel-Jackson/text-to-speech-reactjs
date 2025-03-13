@@ -71,20 +71,10 @@ useEffect(() => {
   if (outputRef.current && currentWordIndex !== -1) {
     const words = outputRef.current.getElementsByClassName('word');
     if (words.length > 0 && currentWordIndex < words.length) {
-      // Add a small delay for smoothness
-      setTimeout(() => {
-        words[currentWordIndex].scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'center'
-        });
-        
-        // Add temporary highlight class
-        words[currentWordIndex].classList.add('temp-highlight');
-        setTimeout(() => {
-          words[currentWordIndex].classList.remove('temp-highlight');
-        }, 500);
-      }, 50);
+      words[currentWordIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     }
   }
 }, [currentWordIndex]);
@@ -219,12 +209,18 @@ useEffect(() => {
     }
   }, [text]);
 
+
+
+
   const handleSpeak = () => {
+
+
     if (isSpeaking && !isPaused) {
       synthesis.pause();
       setIsPaused(true);
       return;
     }
+
 
     if (isSpeaking && isPaused) {
       synthesis.resume();
@@ -232,25 +228,34 @@ useEffect(() => {
       return;
     }
 
+
     if (!text) return;
 
+
+    wordsRef.current = text.split(" ");
     const utterance = new SpeechSynthesisUtterance(text);
+    utteranceRef.current = utterance;
+
+
     utterance.volume = volume;
     utterance.pitch = pitch;
     utterance.rate = rate;
     utterance.voice = selectedVoice;
 
+
     utterance.onstart = () => {
       setIsSpeaking(true);
       setIsPaused(false);
-      setCurrentWordIndex(0);
+      setCurrentWordIndex(-1);
     };
+
 
     utterance.onend = () => {
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentWordIndex(-1);
     };
+
 
     utterance.onboundary = (event) => {
       if (event.name === "word") {
@@ -259,6 +264,7 @@ useEffect(() => {
         setCurrentWordIndex(currentWord);
       }
     };
+
 
     synthesis.speak(utterance);
   };
@@ -418,9 +424,7 @@ useEffect(() => {
             <FaTimes />
           </button>
           <div className="settings-dropdown">
-            <button className="icon-button" onClick={() => setShowSettings(!showSettings)}
-                disabled={isSpeaking && !isPaused}
-              >
+            <button className="icon-button" onClick={() => setShowSettings(!showSettings)}>
               <FaCog />
             </button>
 
@@ -468,7 +472,6 @@ useEffect(() => {
               className={`voice-select ${darkMode ? 'dark' : 'light'}`}
               value={selectedVoice?.name || ""}
               onChange={(e) => setSelectedVoice(voices.find(v => v.name === e.target.value))}
-              disabled={isSpeaking && !isPaused}
             >
               {voices.map((voice) => (
                 <option key={voice.name} value={voice.name}>
@@ -508,15 +511,14 @@ useEffect(() => {
 
 <div className="output-section">
   <div className="output" ref={outputRef}>
-  {text.split(/\s+/).map((word, index) => (
-                <span
-                  key={index}
-                  className={`word ${index === currentWordIndex ? "highlight" : ""}`}
-                  onClick={() => speakWord(word)}
-                >
-                  {word}{" "}
-                </span>
-              ))}
+    {text.split(/\s+/).map((word, index) => (
+      <span
+        key={index}
+        className={`word ${index === currentWordIndex ? "highlight" : ""}`}
+      >
+        {word}{" "}
+      </span>
+    ))}
   </div>
 </div>
     </div>

@@ -138,6 +138,11 @@ body {
   position: relative;
 }
 
+.settings-dropdown:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .dropdown-content {
   position: absolute;
   top: 30px;
