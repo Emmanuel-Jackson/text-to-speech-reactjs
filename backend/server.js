@@ -37,6 +37,10 @@ require('./config/passport');
 // Database connection
 connectDB();
 
+// Root route (Fix for "Cannot GET /")
+app.get('/', (req, res) => {
+  res.send('API is working!');
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
