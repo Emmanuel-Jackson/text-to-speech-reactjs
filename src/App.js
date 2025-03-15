@@ -10,7 +10,7 @@ function App() {
       <Route path="/auth" element={<Auth />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<MainInterface />} />
-      </Route>
+     </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -1,13 +1,13 @@
 @font-face {
   font-family: 'OpenDyslexic';
-  src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype');
+  src: url('../public/fonts/OpenDyslexic-Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'OpenDyslexic';
-  src: url('/fonts/OpenDyslexic-Bold.otf') format('opentype');
+  src: url('../public/fonts/OpenDyslexic-Bold.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
 }
@@ -33,7 +33,8 @@ body {
 }
 
 .app-container {
-  padding: 20px;
+  padding: 20px 40px; /* Added horizontal padding */
+
   max-width: 1200px;
   margin: 0 auto;
   height: 100vh;
@@ -103,7 +104,7 @@ body {
 .text-areas {
   display: flex;
   gap: 20px;
-  width: 97%;
+  width: 90%;
   max-width: 1200px;
   padding: 20px;
 }
@@ -142,16 +143,16 @@ body {
 }
 
 .icon-button:hover {
-  color: #4ecdc4;
+  opacity: 0.7;
+
+}
+.icon-button:disabled:hover {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .settings-dropdown {
   position: relative;
-}
-
-.settings-dropdown:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 .dropdown-content {
@@ -212,6 +213,7 @@ body {
   color: inherit;
   height: 253px;
   overflow-y: auto;
+  background-color: purple;
 }
 
 .word.highlight {
@@ -283,7 +285,7 @@ body {
 /* Copy Popup */
 .copy-popup {
   position: fixed;
-  bottom: 20px;
+  bottom: 105px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #4ecdc4;
@@ -400,6 +402,8 @@ body {
     background-color: #4ecdc4;
   }
 }
+
+
 /* Update header styles */
 .header {
   display: flex;
@@ -629,8 +633,8 @@ button:focus,  select:focus {
   padding: 15px;
 }
 
-.dark .settings-dropdown .dropdown-content {
-  background: linear-gradient(145deg, #2d2d2d, #252525);
+.dark-mode .settings-dropdown .dropdown-content {
+  background: #121212;
   border: 1px solid #404040;
 }
 
@@ -786,7 +790,7 @@ button:focus,  select:focus {
   gap: 1.2rem;
 }
 
-.auth-input {
+.auth-input, .google-login-button{
   width: 100%;
   padding: 1rem;
   border: 2px solid #e0e0e0;
@@ -800,13 +804,17 @@ button:focus,  select:focus {
   box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
 }
 
-.auth-button {
+.auth-button, .google-login-button {
   padding: 1rem;
   border: none;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px; /* Adjust height to match your design */
 }
 
 .auth-button.primary {
@@ -1240,8 +1248,8 @@ input :focus{
   padding: 0.8rem 1.5rem;
   border-radius: 25px;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 13.2px;
+  font-weight: 700;
+  font-size: 11px;
   transition: transform 0.3s ease;
 }
 
@@ -1264,9 +1272,16 @@ input :focus{
 
 /* Playback controls adjustment */
 .controls {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 2rem;
+  position: sticky;
+  bottom: 20px; /* Adjusted for better positioning */
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .control-icon:disabled {
   color: #ccc !important;
@@ -1645,18 +1660,31 @@ input :focus{
   border-color: #4ecdc4;
 }
 
+.settings-dropdown:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+
+}
+.settings-dropdown:disabled:hover{
+  color: #666;
+  opacity: 0.7;
+}
+
+
 /* Disabled States */
 button:disabled, select:disabled {
   opacity: 0.7;
   cursor: not-allowed !important;
-  background-color: #666 !important;
   border-color: #666 !important;
 }
 
 /* Modern Text Areas */
 .text-area, .output {
   width: 100%;
-  min-height: 300px;
+  height: 240px; /* Original height */
+  padding: 10px; /* Original padding */
+  font-size: 1rem; /* Original font size */
   padding: 1.5rem;
   border: 2px solid #4ecdc4;
   border-radius: 12px;
@@ -1679,10 +1707,10 @@ button:disabled, select:disabled {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
-  width: 100%;
-  max-width: 1200px;
+  width: 97%;
+  max-width: 1150px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
 }
 
 @media (max-width: 768px) {
@@ -1692,12 +1720,273 @@ button:disabled, select:disabled {
 }
 
 /* Footer Colors */
-.app-footer {
-  background: #ced4da;
-  color: #333;
-}
+
 
 .dark-mode .app-footer {
   background: #121212;
   color: #fff;
 }
+
+.text-area, .output {
+  font-family: var(--main-font, 'OpenDyslexic'), sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Add this to your root CSS variables */
+:root {
+  --main-font: 'OpenDyslexic';
+}
+
+
+/* Main container for text areas */
+.text-areas {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  justify-content: center; /* Center horizontally */
+  gap: 20px; /* Space between input and output */
+  width: 100%;
+  max-width: 1200px; /* Adjust as needed */
+  margin: 0 auto; /* Center the entire section */
+  padding: 20px; /* Add some padding */
+}
+
+/* Input and output sections */
+.input-section,
+.output-section {
+  flex: 1; /* Equal width for both sections */
+  max-width: 600px; /* Limit width for better readability */
+}
+
+/* Text area and output styling */
+.text-area,
+.output {
+  width: 100%;
+  height: 230px; /* Same height for both */
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  resize: none;
+  background-color: inherit;
+  color: inherit;
+  transition: border-color 0.3s;
+}
+
+.text-area:focus,
+.output:focus {
+  border-color: #4ecdc4;
+  outline: none;
+}
+
+/* Voice selection dropdown */
+.voice-dropdown select {
+  width: 100%; /* Full width */
+  padding: 5px;
+  border-radius: 5px;
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Font controls */
+.font-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.font-select,
+.language-select {
+  width: 100%; /* Full width */
+  padding: 5px;
+  border-radius: 5px;
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Header and controls alignment */
+.textarea-header {
+  display: flex;
+  justify-content: center; /* Center icon buttons */
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center; /* Center control buttons */
+  gap: 10px;
+  margin-top: 20px;
+}
+/* Adjust output height */
+.output-section {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px); /* Account for header space */
+}
+
+.output {
+  height: 320px !important; /* Increased height */
+  flex-grow: 1;
+}
+
+.text-areas {
+  align-items: stretch;
+}
+
+.input-section, .output-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile notice - ALWAYS show on mobile */
+.mobile-notice {
+  display: none; /* Hide by default */
+}
+
+@media (max-width: 768px) {
+  .app-container > *:not(.mobile-notice) {
+    display: none !important;
+  }
+
+    .mobile-notice {
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      font-size: 1.2rem;
+      height: 100vh;
+      padding: 20vh 2rem;
+    }
+    .desktop-emoji {
+      font-size: 4rem; /* Makes the emoji larger */
+      margin-bottom: 1rem; /* Adds space between emoji & text */
+    }
+    .mobile-subtitle-text {
+      font-size: 12.1px; 
+      font-weight: 600;
+    }
+    .mobile-title-text {
+      font-size: 14px;
+    }
+  }
+  
+
+.close-setting-container {
+  display: flex;
+  justify-content: center;
+}
+/* Modern range inputs */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  outline: none;
+  margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #4ecdc4;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dark-mode input[type="range"] {
+  background: #404040;
+}
+
+.dark-mode input[type="range"]::-webkit-slider-thumb {
+  background: #ff6b6b;
+}
+
+.settings-group {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.settings-group h4 {
+  margin: 0 0 10px 0;
+  color: #4ecdc4;
+  font-size: 0.9rem;
+}
+
+.modern-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #4ecdc4;
+  border-radius: 8px;
+  background: white;
+  color: #333;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.dark-mode .modern-select {
+  background: #2d2d2d;
+  border-color: #ff6b6b;
+  color: white;
+}
+
+.dropdown-content {
+  width: 150px;
+}
+.close-settings {
+padding: 2px 20px;
+background-color: #4ecdc4;
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.dark-mode .close-settings {
+  background-color: #ff6b6b;
+}
+
+/* Mobile Notice */
+.mobile-notice {
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  font-size: 1.2rem;
+  height: 100vh;
+  padding: 20vh 2rem;
+}
+
+.desktop-emoji {
+  font-size: 6rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-subtitle-text {
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.mobile-title-text {
+  font-size: 19px;
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .auth-container > *:not(.mobile-notice) {
+    display: none !important;
+  }
+
+  .mobile-notice {
+    display: flex !important; /* Force display on mobile */
+  }
+}
+

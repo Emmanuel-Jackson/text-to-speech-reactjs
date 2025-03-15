@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
-import { FaPlay, FaPause, FaStop, FaCopy, FaSun, FaMoon, FaCog, FaTimes, FaRunning, FaFileUpload, FaSignOutAlt, FaStepBackward, FaStepForward, FaRobot } from "react-icons/fa";
+import { FaPlay, FaPause, FaStop, FaCopy, FaSun, FaMoon, FaCog, FaTimes, FaTrashAlt, FaRunning, FaFileUpload, FaSignOutAlt, FaStepBackward, FaStepForward, FaRobot, FaDownload } from "react-icons/fa";
 import { getDocument } from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { createWorker } from 'tesseract.js';
@@ -32,8 +32,18 @@ export default function MainInterface() {
   const wordsRef = useRef([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-
+  const [fontFamily, setFontFamily] = useState(() => {
+    const savedFont = localStorage.getItem('fontFamily') || 'OpenDyslexic';
+    return savedFont;
+  });
+  const [fontSize, setFontSize] = useState(() => {
+    const savedSize = localStorage.getItem('fontSize');
+    return savedSize ? parseInt(savedSize) : 16;
+  });
+  const [letterSpacing, setLetterSpacing] = useState(() => {
+    const savedSpacing = localStorage.getItem('letterSpacing');
+    return savedSpacing ? parseFloat(savedSpacing) : 1.5;
+  });
     // New features state
     const [fontSettings, setFontSettings] = useState(() => {
       const savedFont = localStorage.getItem('fontSettings');
@@ -58,9 +68,12 @@ export default function MainInterface() {
       rate: 1
     });
     const [selectedLanguage, setSelectedLanguage] = useState(
-      localStorage.getItem('selectedLanguage') || 'en'
+      localStorage.getItem('selectedLanguage') || 'en-US'
     );
-   
+    useEffect(() => {
+      localStorage.setItem('fontSize', fontSize);
+      localStorage.setItem('letterSpacing', letterSpacing);
+    }, [fontSize, letterSpacing]);
     useEffect(() => {
       const words = text.split(/\s+/).filter(word => word).length;
       const minutes = words / (150 * currentSettings.rate); // 150 words/min base speed
@@ -123,9 +136,9 @@ useEffect(() => {
       //document.documentElement.style.setProperty('--dyslexia-font', fontFamily);
    // }, [fontFamily]);
 
-    useEffect(() => {
-      localStorage.setItem('fontSettings', JSON.stringify(fontSettings));
-    }, [fontSettings]);
+   useEffect(() => {
+    localStorage.setItem('fontFamily', fontFamily);
+  }, [fontFamily]);
  
     // Document upload handler
 
@@ -145,16 +158,34 @@ useEffect(() => {
     const loadVoices = () => {
       const availableVoices = synthesis.getVoices();
       setVoices(availableVoices);
-      if (availableVoices.length > 0 && !selectedVoice) {
-        setSelectedVoice(availableVoices.find(v => v.lang.includes(selectedLanguage)) || availableVoices[0]);
+      if (availableVoices.length > 0) {
+        const matchingVoice = availableVoices.find(v => v.lang === selectedLanguage) || availableVoices[0];
+        setSelectedVoice(matchingVoice);
       }
     };
-    synthesis.onvoiceschanged = loadVoices;
+
+    if (synthesis.onvoiceschanged !== undefined) {
+      synthesis.onvoiceschanged = loadVoices;
+    }
     loadVoices();
-    return () => synthesis.onvoiceschanged = null;
+
+    return () => {
+      synthesis.onvoiceschanged = null;
+    };
   }, [selectedLanguage]);
 
-
+  // Handle font change
+  const handleFontChange = (e) => {
+    const newFont = e.target.value;
+    setFontFamily(newFont);
+    document.documentElement.style.setProperty('--main-font', newFont);
+  };
+  // Handle language change
+  const handleLanguageChange = (e) => {
+    const newLanguage = e.target.value;
+    setSelectedLanguage(newLanguage);
+    localStorage.setItem('selectedLanguage', newLanguage);
+  };
   useEffect(() => {
     recognition.continuous = true; // Enable continuous listening
     recognition.interimResults = true; // Get interim results
@@ -204,7 +235,9 @@ useEffect(() => {
 
   const handleSpeak = () => {
 
-
+    if (showSettings) {
+      setShowSettings(false);
+    }
     if (isSpeaking && !isPaused) {
       synthesis.pause();
       setIsPaused(true);
@@ -246,7 +279,6 @@ useEffect(() => {
       setCurrentWordIndex(-1);
     };
 
-
     utterance.onboundary = (event) => {
       if (event.name === "word") {
         const charIndex = event.charIndex;
@@ -254,7 +286,6 @@ useEffect(() => {
         setCurrentWordIndex(currentWord);
       }
     };
-
 
     synthesis.speak(utterance);
   };
@@ -277,6 +308,9 @@ useEffect(() => {
 
 
   const handleClear = () => {
+    synthesis.cancel();
+    setIsSpeaking(false);
+    setIsPaused(false);
     setText("");
     wordsRef.current = [];
   };
@@ -295,9 +329,9 @@ useEffect(() => {
   const Footer = () => (
     <footer className="app-footer">
       <div className="footer-left">
-        <h3 className="footer-title">Speech Studio</h3>
+        <h3 className="footer-title">Speech Aura</h3>
         <p>Developed by Elijah Jackson</p>
-        <p className="copyright">© 2025 Speech Studio. All rights reserved</p>
+        <p className="copyright">© 2025 Speech Aura. All rights reserved</p>
       </div>
  
       <div className="footer-center">
@@ -321,7 +355,7 @@ useEffect(() => {
         </div>
         /** */}
         <a
-          href="https://paypal.me/SpeechStudio?country.x=US&locale.x=en_US"
+          href="https://www.paypal.com/paypalme/SpeechAura"
           className="donate-link"
           target="_blank"
           rel="noopener noreferrer"
@@ -348,7 +382,7 @@ useEffect(() => {
   <div className="app-container">
   <header className="header">
     <div className="header-left">
-      <h1 className="gradient-title-main-interface">Speech Studio</h1>
+      <h1 className="gradient-title-main-interface">Speech Aura</h1>
       <div className="subtitle">Unlimited Words. Free. No Complexity.</div>
     </div>
 
@@ -358,7 +392,6 @@ useEffect(() => {
       <div className="current-time">{time}</div>
       <div className="current-date">{new Date().toLocaleDateString()}</div>
     </div>
-
 
   <div className="profile-container">
   <div className="profile-icon">
@@ -385,10 +418,11 @@ useEffect(() => {
 </div>
 </div>
 
-
   </header>
+
   <div className="mobile-notice">
-  <span> On a mobile device?<br /> ✨ Experience all features on a desktop.</span>
+  <div className="desktop-emoji">💻</div>
+  <span className="mobile-title-text"> Oops! This application is designed for desktop use only.<br /></span> <span className="mobile-subtitle-text">✨ For the best user experience, please access it from a computer.</span>
   </div>
   <div className="main-content">
     <div className="text-areas">
@@ -407,24 +441,32 @@ useEffect(() => {
                 onChange={handleFileUpload}
                 style={{ display: 'none' }}
               />
-          <button className="icon-button" onClick={handleCopy}>
+          <button className="icon-button" onClick={handleCopy} disabled={!text}>
             <FaCopy />
           </button>
-          <button className="icon-button" onClick={handleClear}>
-            <FaTimes />
+          <button className="icon-button" onClick={handleClear} disabled={!text}>
+          <FaTrashAlt />
           </button>
           <div className="settings-dropdown">
           <button 
-                className="icon-button" 
+                className={`icon-button ${isSpeaking && !isPaused ? 'disabled' : ''}`}
                 onClick={() => setShowSettings(!showSettings)}
-                disabled={isSpeaking && !isPaused}
+                disabled={isSpeaking || isPaused}
               >
-                <FaCog style={{ color: (isSpeaking && !isPaused) ? '#666' : 'inherit' }} />
-            </button>
+                <FaCog />
+              </button>
 
 
             {showSettings && (
           <div className="dropdown-content">
+            <div className="close-setting-container">
+            <button
+            style={{cursor:"pointer"}}onClick={() => setShowSettings(false)}
+            className="close-settings"
+            >
+            Close <FaTimes />
+            </button>
+            </div>
                    <label>
                      Volume:
                      <input
@@ -458,6 +500,29 @@ useEffect(() => {
                        onChange={(e) => setRate(parseFloat(e.target.value))}
                      />
                    </label>
+                   <div className="dyslexia-controls">
+                <label>
+                  Font Size:
+                  <input
+                    type="range"
+                    min="12"
+                    max="24"
+                    value={fontSize}
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                  />
+                </label>
+                <label>
+                  Letter Spacing:
+                  <input
+                    type="range"
+                    min="1"
+                    max="3"
+                    step="0.1"
+                    value={letterSpacing}
+                    onChange={(e) => setLetterSpacing(Number(e.target.value))}
+                  />
+                </label>
+            </div>
                  </div>
                )}
           </div>
@@ -466,7 +531,7 @@ useEffect(() => {
                 className={`voice-select ${darkMode ? 'dark' : 'light'}`}
                 value={selectedVoice?.name || ""}
                 onChange={(e) => setSelectedVoice(voices.find(v => v.name === e.target.value))}
-                disabled={isSpeaking && !isPaused}
+                disabled={isSpeaking || isPaused}
               >
                 {voices.map((voice) => (
                   <option key={voice.name} value={voice.name}>
@@ -479,38 +544,37 @@ useEffect(() => {
         <textarea
               className="text-area"
               style={{
-                fontFamily: fontSettings.family,
-                fontSize: `${fontSettings.size}px`,
-                letterSpacing: `${fontSettings.spacing}px`,
+                fontFamily: fontFamily,
+                fontSize: `${fontSize}px`,
+                letterSpacing: `${letterSpacing}px`,
                 backgroundColor: darkMode ? '#2d2d2d' : '#ffffff'
               }}
               placeholder="Enter Text..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               spellCheck={true}
+              disabled={isSpeaking}
             />
         <div className="font-controls">
         <select
-                value={fontSettings.family}
-                onChange={(e) => setFontSettings(prev => ({...prev, family: e.target.value}))}
+                value={fontFamily}
+                onChange={handleFontChange}
                 className={`font-select ${darkMode ? 'dark' : 'light'}`}
-                disabled={isSpeaking && !isPaused}
               >
                 <option value="OpenDyslexic">OpenDyslexic</option>
                 <option value="Arial">Arial</option>
                 <option value="Comic Sans MS">Comic Sans</option>
-          </select>
-          <select
+              </select>
+              <select
                 value={selectedLanguage}
-                onChange={(e) => {
-                  setSelectedLanguage(e.target.value);
-                  localStorage.setItem('selectedLanguage', e.target.value);
-                }}
+                onChange={handleLanguageChange}
+                disabled={isSpeaking || isPaused}
                 className={`language-select ${darkMode ? 'dark' : 'light'}`}
               >
-                <option value="en">English</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
+                <option value="en-US">English (US) Accent</option>
+                <option value="es-ES">Spanish Accent</option>
+                <option value="fr-FR">French Accent</option>
+                <option value="de-DE">German Accent</option>
               </select>
         </div>
         <div className="word-count">
@@ -528,6 +592,7 @@ useEffect(() => {
       <span
         key={index}
         className={`word ${index === currentWordIndex ? "highlight" : ""}`}
+        style={{ fontFamily: fontFamily, fontSize: `${fontSize}px`, letterSpacing: `${letterSpacing}px` }}
       >
         {word}{" "}
       </span>
@@ -537,12 +602,15 @@ useEffect(() => {
     </div>
 
 
-    <div className="controls">
+  <div className="controls">
 
   <button
     className="control-button"
     onClick={handleSpeak}
     disabled={!text}
+    style={{ 
+      backgroundColor: isSpeaking && !isPaused ? '#ff6b6b' : '#4ecdc4' 
+    }}
   >
     {isSpeaking && !isPaused ? <FaPause /> : <FaPlay />}
     {isSpeaking && !isPaused ? "Pause" : "Play"}
@@ -569,9 +637,8 @@ useEffect(() => {
           Processing {fileInputRef.current?.files[0]?.type.startsWith('image/') ? 'image' : 'PDF'}...
         </div>
       )}
-
-
     <Footer />
   </div>
+
 );
 }

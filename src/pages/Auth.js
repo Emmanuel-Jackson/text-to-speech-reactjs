@@ -72,9 +72,9 @@ const Auth = () => {
   const Footer = () => (
     <footer className="app-footer-auth">
       <div className="footer-left">
-        <h3 className="footer-title">Speech Studio</h3>
+        <h3 className="footer-title">Speech Aura</h3>
         <p>Developed by Elijah Jackson</p>
-        <p className="copyright">© 2025 Speech Studio. All rights reserved</p>
+        <p className="copyright">© 2025 Speech Aura. All rights reserved</p>
       </div>
   
       <div className="footer-center">
@@ -97,7 +97,7 @@ const Auth = () => {
         </div>
         /** */}
         <a 
-          href="https://paypal.me/SpeechStudio?country.x=US&locale.x=en_US" 
+          href="https://www.paypal.com/paypalme/SpeechAura" 
           className="donate-link"
           target="_blank" 
           rel="noopener noreferrer"
@@ -111,25 +111,33 @@ const Auth = () => {
 
   return (
     <div className="auth-container">
+              <div className="mobile-notice">
+            <div className="desktop-emoji">💻</div>
+            <span className="mobile-title-text">
+              Oops! This application is designed for desktop use only.<br />
+            </span>
+            <span className="mobile-subtitle-text">
+              ✨ For the best user experience, please access it from a computer.
+            </span>
+          </div>
     <div className="auth-grid">
       {/* Left Section */}
       <div className="welcome-section">
-        <h1 className="gradient-title animate-gradient">
-          Welcome to Speech Studio
+        <h1 className="gradient-title animate-gradient" style={{ fontSize: '2.62rem' }}>
+          Welcome to Speech Aura
         </h1>
-        <div className="mobile-notice">
-        <span> On a mobile device?<br /> ✨ Experience all features on a desktop.</span>
-      </div>
+
         <div className="bio-text">
-          <p className="lead">Did you know 1 in 5 people experience dyslexia? Meet Speech Studio, an interactive web tool -</p>
+          <p className="lead">Did you know? Approximately 80% of students in special education experience dyslexia. Meet Speech Aura, an interactive web tool—</p>
           <p className="description-bio">A <strong>free, unlimited text-to-speech solution</strong> developed by <strong>Elijah Jackson</strong>, a passionate high school developer. 
-          Inspired by the need for better dyslexia support, <strong>Speech Studio</strong> helps break down barriers with:
+          Inspired by the need for better dyslexia support, <strong>Speech Aura</strong> helps break down barriers with:
           </p>
           <ul className="feature-list">
-            <li>✅ 100% free unlimited conversions</li>
+            <li>✅ 100% free unlimited words</li>
             <li>📄 Document uploads (PDF/images)</li>
             <li>🎙️ Real-time speech tracking</li>
             <li>🔒 Zero subscriptions</li>
+            <li>🖋️ Offer OpenDyslexic font</li>
           </ul>
         </div>
       </div>
@@ -203,7 +211,8 @@ const Auth = () => {
       </div>
 
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-        <div className="google-login">
+      <div className="google-login-button">
+
         <GoogleLogin
           onSuccess={() => {
             window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
