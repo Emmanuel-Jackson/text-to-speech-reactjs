@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 });
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://speechstudio.vercel.app',
+    origin: process.env.FRONTEND_URL || 'https://speechaura.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
