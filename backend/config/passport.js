@@ -5,7 +5,7 @@ const User = require('../models/User');
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'https://text-to-speech-reactjs.onrender.com/api/auth/google/callback',
+  callbackURL: 'https://api.speechaura.com/api/auth/google/callback',
   passReqToCallback: true
 },
 async (req, accessToken, refreshToken, profile, done) => {
