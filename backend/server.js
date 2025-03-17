@@ -24,12 +24,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🔹 3. CORS Configuration
+const allowedOrigins = [
+  'https://speechaura.com',
+  'https://www.speechaura.com',
+  'https://api.speechaura.com'
+];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://speechaura.com',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+  origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+      } else {
+          callback(new Error('CORS not allowed'));
+      }
+  },
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true
 }));
 
 // Handle preflight requests
