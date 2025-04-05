@@ -75,6 +75,25 @@ router.get('/google/callback',
     res.redirect(`${process.env.CLIENT_URL}/auth?token=${token}`);
   }
 );
+// Add Microsoft routes alongside Google
+router.get('/microsoft', passport.authenticate('microsoft'));
+
+router.get('/microsoft/callback', 
+  passport.authenticate('microsoft', { 
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/auth?error=microsoft_failed` 
+  }),
+  (req, res) => {
+    try {
+      console.log('Successful Microsoft auth for user:', req.user); // Add this
+      const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.redirect(`${process.env.CLIENT_URL}/auth?token=${token}`);
+    } catch (error) {
+      console.error('Token generation error:', error);
+      res.redirect(`${process.env.CLIENT_URL}/auth?error=token_failed`);
+    }
+  }
+);
 
 // Registration Route
 router.post('/register', async (req, res) => {
@@ -178,5 +197,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'LOGIN_FAILED' });
   }
 });
+
+
 
 module.exports = router;

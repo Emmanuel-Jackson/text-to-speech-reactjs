@@ -4,11 +4,14 @@ const connectDB = require('./config/db');
 const passport = require('passport');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
-
 const app = express();
+const documentRoutes = require('./routes/documents');
 
-// 🔹 1. Trust Proxy (for HTTPS handling behind Nginx)
-app.set('trust proxy', 1);
+
+
+
+
+
 
 // 🔹 2. Add before routes (Security Headers)
 app.use((req, res, next) => {
@@ -24,11 +27,19 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+
 const allowedOrigins = [
   'https://speechaura.com',
   'https://www.speechaura.com',
-  'https://api.speechaura.com'
+  'https://api.speechaura.com',
+  'http://localhost:5000',
+  'http://localhost:3000',
 ];
+
+
+
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -43,8 +54,14 @@ app.use(cors({
   credentials: true
 }));
 
+
+
+
 // Handle preflight requests
 app.options('*', cors());
+
+
+
 
 // 🔹 4. Middleware
 app.use(express.json());
@@ -52,21 +69,38 @@ app.use(express.urlencoded({ extended: true }));  // Ensures proper request body
 app.use(passport.initialize());
 require('./config/passport');
 
+
+
+
 // 🔹 5. Database connection
 connectDB();
+
+
+
 
 // 🔹 6. Root route (Fix for "Cannot GET /")
 app.get('/', (req, res) => {
   res.send('API is working!');
 });
 
+
+
+
 // 🔹 7. Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
+
+
+
 // 🔹 8. API Routes
 app.use('/api/auth', authRoutes);
+
+
+app.use('/api/documents', documentRoutes);
+
+
 
 // 🔹 9. Error handling middleware (Improved Logging)
 app.use((err, req, res, next) => {
@@ -76,6 +110,9 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
+
+
+
 
 // 🔹 10. Start the server
 const PORT = process.env.PORT || 5000;

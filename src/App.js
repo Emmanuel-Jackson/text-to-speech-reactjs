@@ -7,10 +7,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <Routes>
-      <Route path="/auth" element={<Auth />} />
+    <Route path="/auth" element={<Auth />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<MainInterface />} />
-     </Route>
+    </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

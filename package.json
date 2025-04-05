@@ -26,6 +26,7 @@
     "crypto-browserify": "^3.12.1",
     "https-browserify": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
+    "microsoft-cognitiveservices-speech-sdk": "^1.43.0",
     "mongoose": "^8.12.1",
     "open-dyslexic": "^1.0.3",
     "os-browserify": "^0.3.0",

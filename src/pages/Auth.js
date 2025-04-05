@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
+import { FaMicrosoft, FaFacebook } from 'react-icons/fa';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -68,6 +69,12 @@ const Auth = () => {
     // In your frontend Google login button
   window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google?prompt=consent&access_type=offline`;
   };
+  const handleMicrosoftLogin = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/microsoft`;
+  };
+  const handleFacebookLogin = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/facebook`;
+  };
 
   const Footer = () => (
     <footer className="app-footer-auth">
@@ -77,13 +84,19 @@ const Auth = () => {
         <p className="copyright">© 2025 Speech Aura. All rights reserved</p>
       </div>
   
-      <div className="footer-center">
-      </div>
+      <div className="footer-center"></div>
   
       <div className="footer-right">
-      <p className="email-footer">Contact Email - <a href="mailto:Emjackson107@gmail.com">Emjackson107@gmail.com</a></p>
-
-        {/*}
+        <div className="email-wrapper">
+          <a href="mailto:Emjackson107@gmail.com" className="modern-email-link">
+            <svg className="email-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
+              <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+            Contact Me - Emjackson107@gmail.com
+          </a>
+        </div>
+           {/*}
         <div className="social-icons">
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
             <img src="tiktok-icon.svg" alt="TikTok" />
@@ -123,22 +136,45 @@ const Auth = () => {
     <div className="auth-grid">
       {/* Left Section */}
       <div className="welcome-section">
-        <h1 className="gradient-title animate-gradient" style={{ fontSize: '2.62rem' }}>
+        <h1 className="gradient-title animate-gradient" style={{ fontSize: '36px' }}>
           Welcome to Speech Aura
         </h1>
 
         <div className="bio-text">
           <p className="lead">Did you know? Approximately 80% of students in special education experience dyslexia. Meet Speech Aura, an interactive web tool—</p>
-          <p className="description-bio">A <strong>free, unlimited text-to-speech solution</strong> developed by <strong>Elijah Jackson</strong>, a passionate high school developer. 
-          Inspired by the need for better dyslexia support, <strong>Speech Aura</strong> helps break down barriers with:
+          <p className="description-bio">A <strong>free, unlimited text-to-speech software solution</strong> developed by <strong>Elijah Jackson</strong>, a passionate high school developer. 
+          Inspired by the need for better dyslexia support for students, <strong>Speech Aura</strong> helps break down barriers with:
           </p>
           <ul className="feature-list">
-            <li>✅ 100% free unlimited words</li>
-            <li>📄 Document uploads (PDF/images)</li>
-            <li>🎙️ Real-time speech tracking</li>
-            <li>🔒 Zero subscriptions</li>
-            <li>🖋️ Offer OpenDyslexic font</li>
+            <li>🔒 Zero Subscriptions</li>
+            <li>✅ 100% Free Unlimited Words</li>
+            <li>📄 Document Uploads (PDF/Images)</li>
+            <li>🖋️ Offer OpenDyslexic Font</li>
+            <li>📂 Save & Manage Your Documents</li>
+            <li>🎙️ Effective Speech Tracking</li>
+            <li>🗣️ Voice Dictation</li>
           </ul>
+          <div className="upcoming-update">
+          <span>💡</span>
+            <div>
+              <p>Next upcoming update - Realistic Voices & AI Assistant</p>
+            </div>
+          </div>
+            <a 
+            href="https://www.paypal.com/paypalme/SpeechAura" 
+            className="donate-cta"
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <span>💖🙏</span>
+            <div className="donate-text">
+              <p>
+                <strong>Click to Donate!</strong> As an independent developer, 
+                your support directly help improvements and maintenance, 
+                helping students from any community access better learning tools.
+              </p>
+            </div>
+          </a>
         </div>
       </div>
 
@@ -209,6 +245,7 @@ const Auth = () => {
       <div className="divider">
         <span>or continue with</span>
       </div>
+      <div className="social-login-buttons">
 
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="google-login-button">
@@ -219,11 +256,23 @@ const Auth = () => {
           }}
           onError={() => setError('Google login failed')}
           shape="pill"
-          width="350"
+          width="370"
         />
         </div>
       </GoogleOAuthProvider>
-
+      <button 
+    onClick={handleMicrosoftLogin}
+    className="social-button microsoft"
+  >
+    <span className="microsoft-logo">
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" 
+        alt="Microsoft Logo"
+      />
+    </span>
+    <span className="microsoft-text">Continue with Microsoft</span>
+  </button>
+</div>
       <p className="auth-switch">
         {isLogin ? "Don't have an account?" : "Already have an account?"}
         <button 
