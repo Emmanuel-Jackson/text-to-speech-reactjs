@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTimes, FaSave } from 'react-icons/fa';
-
+import { usePopup } from '../hooks/usePopup.js'; // Import the usePopup hook
 const SaveDocumentPopup = ({ 
   isOpen, 
   onClose, 
@@ -10,6 +10,7 @@ const SaveDocumentPopup = ({
 }) => {
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
+  usePopup(isOpen);
 
   useEffect(() => {
     if (currentDocument) {

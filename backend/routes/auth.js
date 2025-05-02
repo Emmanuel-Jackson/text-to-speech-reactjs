@@ -2,6 +2,8 @@ const router = require('express').Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
+
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // Add at the very top of the file
 console.log('Google Strategy Client ID:', process.env.GOOGLE_CLIENT_ID);
@@ -198,6 +200,38 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Update profile
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const { firstName, lastName } = req.body;
+    
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { firstName, lastName },
+      { new: true }
+    );
+    
+    res.json({
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
 
+// Delete account
+router.delete('/account', auth, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+});
 
 module.exports = router;

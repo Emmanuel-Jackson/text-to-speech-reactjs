@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { FaTrash, FaTimes } from 'react-icons/fa';
+import { FaTrash, FaTimes, FaSearch } from 'react-icons/fa';
+import { usePopup } from '../hooks/usePopup.js'; // Import the usePopup hook
+import { IoSaveOutline } from 'react-icons/io5';
 
-const SavedDocuments = ({ 
-  isOpen, 
-  onClose, 
+const SavedDocuments = ({
+  isOpen,
+  onClose,
   onDocumentSelect,
   currentText,
   setCurrentDocument
@@ -14,6 +16,8 @@ const SavedDocuments = ({
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  usePopup(isOpen); // Add this line
 
   const fetchDocuments = async () => {
     if (!user) return;
@@ -59,16 +63,32 @@ const SavedDocuments = ({
     onClose();
   };
 
+  const filteredDocuments = documents.filter(doc =>
+    doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.content.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (!isOpen) return null;
 
   return (
     <div className="documents-popup-overlay">
       <div className="documents-popup">
         <div className="documents-popup-header">
-          <h3>Your Saved Documents</h3>
+          <h3><IoSaveOutline size={28} className="title-icon" /> Your Saved Documents</h3>
           <button className="close-popup" onClick={onClose}>
             <FaTimes />
           </button>
+        </div>
+        
+        <div className="documents-search-container">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search documents by title or content..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="documents-search-input"
+          />
         </div>
         
         <div className="documents-list-container">
@@ -76,17 +96,19 @@ const SavedDocuments = ({
             <div className="loading-documents">Loading documents...</div>
           ) : error ? (
             <div className="documents-error">{error}</div>
-          ) : documents.length === 0 ? (
-            <div className="no-documents">No documents saved yet</div>
+          ) : filteredDocuments.length === 0 ? (
+            <div className="no-documents">
+              {searchTerm ? 'No matching documents found' : 'No documents saved yet'}
+            </div>
           ) : (
             <ul className="documents-list">
-              {documents.map((doc) => (
+              {filteredDocuments.map((doc) => (
                 <li key={doc._id} className="document-item">
                   <div className="document-content" onClick={() => handleSelect(doc)}>
                     <h4 className="document-title">{doc.title}</h4>
                     <p className="document-preview">
-                      {doc.content.length > 100 
-                        ? `${doc.content.substring(0, 100)}...` 
+                      {doc.content.length > 100
+                        ? `${doc.content.substring(0, 100)}...`
                         : doc.content}
                     </p>
                     <div className="document-meta">
@@ -98,7 +120,7 @@ const SavedDocuments = ({
                       </span>
                     </div>
                   </div>
-                  <button 
+                  <button
                     className="delete-document"
                     onClick={(e) => {
                       e.stopPropagation();

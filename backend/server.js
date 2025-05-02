@@ -6,14 +6,17 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const app = express();
 const documentRoutes = require('./routes/documents');
+const rateLimit = require('express-rate-limit');
 
+// 🔹 Security Headers Middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  message: 'Too many requests from this IP, please try again later',
+  headers: true
+});
 
-
-
-
-
-
-// 🔹 2. Add before routes (Security Headers)
+app.use('/api/', limiter);
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -24,11 +27,11 @@ app.use((req, res, next) => {
     "font-src 'self' https://fonts.gstatic.com data:;" +
     "img-src 'self' data: https://lh3.googleusercontent.com;"
   );
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
   next();
 });
-
-
-
 
 const allowedOrigins = [
   'https://speechaura.com',
@@ -38,71 +41,46 @@ const allowedOrigins = [
   'http://localhost:3000',
 ];
 
-
-
-
+// 🔹 CORS Configuration
 app.use(cors({
   origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-      } else {
-          callback(new Error('CORS not allowed'));
-      }
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
   },
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization',
   credentials: true
 }));
 
-
-
-
 // Handle preflight requests
 app.options('*', cors());
 
-
-
-
-// 🔹 4. Middleware
+// 🔹 Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));  // Ensures proper request body parsing
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 require('./config/passport');
 
-
-
-
-// 🔹 5. Database connection
+// 🔹 Database connection
 connectDB();
 
-
-
-
-// 🔹 6. Root route (Fix for "Cannot GET /")
+// 🔹 Basic Routes
 app.get('/', (req, res) => {
   res.send('API is working!');
 });
 
-
-
-
-// 🔹 7. Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
-
-
-
-// 🔹 8. API Routes
+// 🔹 API Routes
 app.use('/api/auth', authRoutes);
-
-
 app.use('/api/documents', documentRoutes);
 
-
-
-// 🔹 9. Error handling middleware (Improved Logging)
+// 🔹 Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Global Error:', err);
   res.status(500).json({
@@ -111,10 +89,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-
-
-
-// 🔹 10. Start the server
+// 🔹 Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode.`);
