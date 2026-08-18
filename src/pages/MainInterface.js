@@ -1991,17 +1991,6 @@ const getCurrentChunkText = () => {
         setSelectedLanguage={setSelectedLanguage}
         selectedLanguage={selectedLanguage}
       />
-      <div className="coming-soon-section" style={{ marginBottom: "35px" }}>
-        <div className="coming-soon-badge">Coming Soon</div>
-        <div className="coming-soon-text">
-          <ul className="coming-soon-list">
-            <li>Realistic Voices</li>
-            <li>AI Assistant</li>
-            <li>MP3 Download</li>
-            <li>Language Options</li>
-          </ul>
-        </div>
-      </div>
       <Footer />
     </div>
   );
