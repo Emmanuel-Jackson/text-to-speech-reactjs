@@ -1166,15 +1166,6 @@ const getCurrentChunkText = () => {
       <div className="footer-center"></div>
  
       <div className="footer-right">
-        <div className="email-wrapper">
-          <a href="mailto:Emjackson107@gmail.com" className="modern-email-link">
-            <svg className="email-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
-              <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
-            </svg>
-            Contact Me - Emjackson107@gmail.com
-          </a>
-        </div>
            {/*}
         <div className="social-icons">
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
@@ -1188,14 +1179,6 @@ const getCurrentChunkText = () => {
           </a>
         </div>
         /** */}
-        <a
-          href="https://www.paypal.com/paypalme/SpeechAura"
-          className="donate-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          💖 Donate! To Help Improve The Website
-        </a>
       </div>
     </footer>
   );
